@@ -1,0 +1,96 @@
+const typeRelations = {
+        acero: {
+            doubleDamageTo: ["hielo", "roca", "hada"],
+            doubleDamageFrom: ["fuego", "lucha", "tierra"],
+            halfDamageFrom: ["acero", "planta", "psiquico", "hada", "volador", "bicho", "roca", "normal", "siniestro", "dragon", "hielo"],
+            noDamageFrom: ["veneno"]
+        },
+        agua: {
+            doubleDamageTo: ["fuego", "tierra", "roca"],
+            doubleDamageFrom: ["planta", "electrico"],
+            halfDamageFrom: ["acero", "agua", "hielo", "fuego"]
+        },
+        bicho: {
+            doubleDamageTo: ["planta", "psiquico", "siniestro"],
+            doubleDamageFrom: ["fuego", "volador", "roca"],
+            halfDamageFrom: ["lucha", "planta", "tierra"]
+        },
+        dragon: {
+            doubleDamageTo: ["dragon"],
+            doubleDamageFrom: ["hielo", "dragon", "hada"],
+            halfDamageFrom: ["agua", "fuego", "planta", "electrico"]
+        },
+        electrico: {
+            doubleDamageTo: ["agua", "volador"],
+            doubleDamageFrom: ["tierra"],
+            halfDamageFrom: ["electrico", "volador"]
+        },
+        fantasma: {
+            doubleDamageTo: ["fantasma", "psiquico"],
+            doubleDamageFrom: ["fantasma", "siniestro"],
+            halfDamageFrom: ["veneno", "bicho"],
+            noDamageFrom: ["normal", "lucha"]
+        },
+        fuego: {
+            doubleDamageTo: ["bicho", "planta", "hielo", "acero"],
+            doubleDamageFrom: ["agua", "tierra", "roca"],
+            halfDamageFrom: ["bicho", "hada", "fuego", "planta", "hielo", "acero"]
+        },
+        hada: {
+            doubleDamageTo: ["lucha", "dragon", "siniestro"],
+            doubleDamageFrom: ["veneno", "acero"],
+            halfDamageFrom: ["lucha", "bicho", "siniestro"]
+        },
+        hielo: {
+            doubleDamageTo: ["planta", "tierra", "volador", "dragon"],
+            doubleDamageFrom: ["fuego", "lucha", "roca", "acero"],
+            halfDamageFrom: ["hielo"]
+        },
+        lucha: {
+            doubleDamageTo: ["normal", "hielo", "roca", "siniestro", "acero"],
+            doubleDamageFrom: ["volador", "psiquico", "hada"],
+            halfDamageFrom: ["bicho", "roca", "siniestro"]
+        },
+        normal: {
+            doubleDamageFrom: ["lucha"],
+            halfDamageFrom: []
+        },
+        planta: {
+            doubleDamageTo: ["agua", "tierra", "roca"],
+            doubleDamageFrom: ["fuego", "hielo", "veneno", "volador", "bicho"],
+            halfDamageFrom: ["agua", "planta", "tierra", "electrico"]
+        },
+        psiquico: {
+            doubleDamageTo: ["lucha", "veneno"],
+            doubleDamageFrom: ["bicho", "fantasma", "siniestro"],
+            halfDamageFrom: ["lucha", "psiquico"]
+        },
+        roca: {
+            doubleDamageTo: ["fuego", "hielo", "volador", "bicho"],
+            doubleDamageFrom: ["agua", "planta", "lucha", "tierra", "acero"],
+            halfDamageFrom: ["normal", "volador", "veneno", "fuego"]
+        },
+        siniestro: {
+            doubleDamageTo: ["fantasma", "psiquico"],
+            doubleDamageFrom: ["lucha", "bicho", "hada"],
+            halfDamageFrom: ["fantasma", "siniestro"],
+            noDamageFrom: ["psiquico"]
+        },
+        tierra: {
+            doubleDamageTo: ["fuego", "electrico", "veneno", "roca", "acero"],
+            doubleDamageFrom: ["agua", "planta", "hielo"],
+            halfDamageFrom: ["veneno", "roca"],
+            noDamageFrom: ["electrico"]
+        },
+        veneno: {
+            doubleDamageTo: ["planta", "hada"],
+            doubleDamageFrom: ["tierra", "psiquico"],
+            halfDamageFrom: ["lucha", "veneno", "bicho", "hada", "planta"]
+        },
+        volador: {
+            doubleDamageTo: ["planta", "lucha", "bicho"],
+            doubleDamageFrom: ["electrico", "hielo", "roca"],
+            halfDamageFrom: ["planta", "lucha", "bicho"]
+        }
+    };
+    

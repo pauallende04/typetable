@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Tipos</title>
+    <style>
+        body, h2, img {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-family: "Gotham Bold", sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #000000;
+            padding: 6vh;
+        }
+
+        @font-face {
+            font-family: "Gotham Bold"; /* Nombre que usarás para referirte a esta fuente */
+            src: url('tpf/Gotham-Black.otf') format('opentype'); /* Ruta relativa al archivo CSS */
+        }
+
+        /* Contenedor para la imagen centrada */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Ajustar según la altura que desees para el contenedor */
+            position: absolute; /* Se posiciona respecto al body o contenedor padre */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0; /* Se asegura de que otros elementos estén encima de este contenedor */
+        }
+
+        /* Estilizar la imagen dentro del contenedor */
+        .image-container img {
+            /* Cambia estos valores al tamaño que prefieras */
+            width: 45%; /* Por ejemplo */
+            height: auto; /* Mantiene la relación de aspecto */
+        }
+
+        /* Asegúrate de que los demás elementos estén encima de la imagen centrada */
+        #types, h2, #output {
+            z-index: 1;
+            position: relative; /* Para que el z-index funcione */
+        }
+
+        #types {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4vh;
+            margin-bottom: 7vh;
+        }
+
+        img {
+            width: 13%;
+            height: 5%;
+            border: 3px solid transparent;
+            transition: border-color 0.3s, transform 0.3s;
+            border-radius: 50px;
+            transform: scale(1);
+            position: relative;
+        }
+
+        img:hover, .selected {
+            transform: scale(1.05);
+        }
+
+        .selected {
+            border-color: rgb(0, 0, 0);
+        }
+
+        #output {
+            display: none;
+            margin-top: 5vh;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 4vh;
+            margin-bottom: 5vh;
+            text-transform: uppercase;
+            letter-spacing: 0.3vh;
+            color: #000000;
+        }
+
+        h2, #doubleDamageTo, #doubleDamageFrom, #noDamageFrom {
+            margin-bottom: 4vh; /* Margen alrededor para separación */
+            color: white;
+            -webkit-text-stroke: 2px black;  /* Para navegadores basados en Webkit (como Chrome y Safari) */
+
+        }
+
+        .output-section {
+            flex: 1; /* Esto hace que cada sección ocupe el mismo espacio */
+            margin: 0 1%; /* un pequeño margen entre las columnas */
+            text-align: center; /* Centramos el contenido de cada sección */
+        }
+    </style>
+</head>
+<body>
+
+<div class="image-container"><img src="img/bg-pokeball.png" alt=""></div>
+
+<div id="types">
+    <img src="img/acero.png" alt="acero" onclick="selectType('acero')">
+    <img src="img/agua.png" alt="agua" onclick="selectType('agua')">
+    <img src="img/bicho.png" alt="bicho" onclick="selectType('bicho')">
+    <img src="img/dragon.png" alt="dragon" onclick="selectType('dragon')">
+    <img src="img/electrico.png" alt="electrico" onclick="selectType('electrico')">
+    <img src="img/fantasma.png" alt="fantasma" onclick="selectType('fantasma')">
+    <img src="img/fuego.png" alt="fuego" onclick="selectType('fuego')">
+    <img src="img/hada.png" alt="hada" onclick="selectType('hada')">
+    <img src="img/hielo.png" alt="hielo" onclick="selectType('hielo')">
+    <img src="img/lucha.png" alt="lucha" onclick="selectType('lucha')">
+    <img src="img/normal.png" alt="normal" onclick="selectType('normal')">
+    <img src="img/planta.png" alt="planta" onclick="selectType('planta')">
+    <img src="img/psiquico.png" alt="psiquico" onclick="selectType('psiquico')">
+    <img src="img/roca.png" alt="roca" onclick="selectType('roca')">
+    <img src="img/siniestro.png" alt="siniestro" onclick="selectType('siniestro')">
+    <img src="img/tierra.png" alt="tierra" onclick="selectType('tierra')">
+    <img src="img/veneno.png" alt="veneno" onclick="selectType('veneno')">
+    <img src="img/volador.png" alt="volador" onclick="selectType('volador')">
+</div>
+
+<div id="output">
+
+    <div class="output-section">
+        <h2>Efectivo contra:</h2>
+        <div id="doubleDamageTo"></div>
+    </div>
+
+    <div class="output-section">
+        <h2>Vulnerable contra:</h2>
+        <div id="doubleDamageFrom"></div>
+    </div>
+
+    <div class="output-section">
+        <h2>No recibe daño de:</h2>
+        <div id="noDamageFrom"></div>
+    </div>
+
+</div>
+
+<script>
+    let selectedTypes = [];
+    const typeRelations = {
+        acero: {
+            doubleDamageTo: ["hielo", "roca", "hada"],
+            doubleDamageFrom: ["fuego", "lucha", "tierra"],
+            halfDamageFrom: ["acero", "planta", "psiquico", "hada", "volador", "bicho", "roca", "normal", "siniestro", "dragon", "hielo"],
+            noDamageFrom: ["veneno"]
+        },
+        agua: {
+            doubleDamageTo: ["fuego", "tierra", "roca"],
+            doubleDamageFrom: ["planta", "electrico"],
+            halfDamageFrom: ["acero", "agua", "hielo", "fuego"],
+            noDamageFrom: []
+        },
+        bicho: {
+            doubleDamageTo: ["planta", "psiquico", "siniestro"],
+            doubleDamageFrom: ["fuego", "volador", "roca"],
+            halfDamageFrom: ["lucha", "planta", "tierra"],
+            noDamageFrom: []
+        },
+        dragon: {
+            doubleDamageTo: ["dragon"],
+            doubleDamageFrom: ["hielo", "dragon", "hada"],
+            halfDamageFrom: ["agua", "fuego", "planta", "electrico"],
+            noDamageFrom: []
+        },
+        electrico: {
+            doubleDamageTo: ["agua", "volador"],
+            doubleDamageFrom: ["tierra"],
+            halfDamageFrom: ["electrico", "volador"],
+            noDamageFrom: []
+        },
+        fantasma: {
+            doubleDamageTo: ["fantasma", "psiquico"],
+            doubleDamageFrom: ["fantasma", "siniestro"],
+            halfDamageFrom: ["veneno", "bicho"],
+            noDamageFrom: ["normal", "lucha"]
+        },
+        fuego: {
+            doubleDamageTo: ["bicho", "planta", "hielo", "acero"],
+            doubleDamageFrom: ["agua", "tierra", "roca"],
+            halfDamageFrom: ["bicho", "hada", "fuego", "planta", "hielo", "acero"],
+            noDamageFrom: []
+        },
+        hada: {
+            doubleDamageTo: ["lucha", "dragon", "siniestro"],
+            doubleDamageFrom: ["veneno", "acero"],
+            halfDamageFrom: ["lucha", "bicho", "siniestro"],
+            noDamageFrom: []
+        },
+        hielo: {
+            doubleDamageTo: ["planta", "tierra", "volador", "dragon"],
+            doubleDamageFrom: ["fuego", "lucha", "roca", "acero"],
+            halfDamageFrom: ["hielo"],
+            noDamageFrom: []
+        },
+        lucha: {
+            doubleDamageTo: ["normal", "hielo", "roca", "siniestro", "acero"],
+            doubleDamageFrom: ["volador", "psiquico", "hada"],
+            halfDamageFrom: ["bicho", "roca", "siniestro"],
+            noDamageFrom: []
+        },
+        normal: {
+            doubleDamageFrom: ["lucha"],
+            halfDamageFrom: [],
+            noDamageFrom: []
+        },
+        planta: {
+            doubleDamageTo: ["agua", "tierra", "roca"],
+            doubleDamageFrom: ["fuego", "hielo", "veneno", "volador", "bicho"],
+            halfDamageFrom: ["agua", "planta", "tierra", "electrico"],
+            noDamageFrom: []
+        },
+        psiquico: {
+            doubleDamageTo: ["lucha", "veneno"],
+            doubleDamageFrom: ["bicho", "fantasma", "siniestro"],
+            halfDamageFrom: ["lucha", "psiquico"],
+            noDamageFrom: []
+        },
+        roca: {
+            doubleDamageTo: ["fuego", "hielo", "volador", "bicho"],
+            doubleDamageFrom: ["agua", "planta", "lucha", "tierra", "acero"],
+            halfDamageFrom: ["normal", "volador", "veneno", "fuego"],
+            noDamageFrom: []
+        },
+        siniestro: {
+            doubleDamageTo: ["fantasma", "psiquico"],
+            doubleDamageFrom: ["lucha", "bicho", "hada"],
+            halfDamageFrom: ["fantasma", "siniestro"],
+            noDamageFrom: ["psiquico"]
+        },
+        tierra: {
+            doubleDamageTo: ["fuego", "electrico", "veneno", "roca", "acero"],
+            doubleDamageFrom: ["agua", "planta", "hielo"],
+            halfDamageFrom: ["veneno", "roca"],
+            noDamageFrom: ["electrico"]
+        },
+        veneno: {
+            doubleDamageTo: ["planta", "hada"],
+            doubleDamageFrom: ["tierra", "psiquico"],
+            halfDamageFrom: ["lucha", "veneno", "bicho", "hada", "planta"],
+            noDamageFrom: []
+        },
+        volador: {
+            doubleDamageTo: ["planta", "lucha", "bicho"],
+            doubleDamageFrom: ["electrico", "hielo", "roca"],
+            halfDamageFrom: ["planta", "lucha", "bicho"],
+            noDamageFrom: []
+        }
+    };
+
+    function selectType(type) {
+        if (selectedTypes.length === 2) {
+            clearTypes();
+        }
+        const currentSelectedElement = document.querySelector(`img[alt="${type}"]`);
+        currentSelectedElement.classList.add('selected');
+        selectedTypes.push(type);
+        document.getElementById('output').style.display = 'block';
+        updateDamageRelations();
+    }
+
+    function clearTypes() {
+        selectedTypes.forEach(type => {
+            const selectedElement = document.querySelector(`img[alt="${type}"]`);
+            selectedElement.classList.remove('selected');
+        });
+        selectedTypes = [];
+        document.getElementById('output').style.display = 'none';
+    }
+
+    function updateDamageRelations() {
+        const damageOutputModifiers = {};
+        const damageInputModifiers = {};
+
+        // Iniciar todos los tipos con el valor base 1x
+        for (let type in typeRelations) {
+            damageOutputModifiers[type] = 1;
+            damageInputModifiers[type] = 1;
+        }
+
+        for (let type of selectedTypes) {
+            const relations = typeRelations[type];
+
+            if (relations.doubleDamageTo) {
+                for (let targetType of relations.doubleDamageTo) {
+                    damageOutputModifiers[targetType] *= 2;
+                }
+            }
+
+            if (relations.halfDamageFrom) {
+                for (let targetType of relations.halfDamageFrom) {
+                    damageInputModifiers[targetType] *= 0.5;
+                }
+            }
+
+            if (relations.doubleDamageFrom) {
+                for (let targetType of relations.doubleDamageFrom) {
+                    damageInputModifiers[targetType] *= 2;
+                }
+            }
+
+            if (relations.noDamageFrom) {
+                for (let targetType of relations.noDamageFrom) {
+                    damageInputModifiers[targetType] = 0;
+                }
+            }
+        }
+
+        // Continuación de la función updateDamageRelations
+
+        const superEffectiveList = [];
+        const notVeryEffectiveList = [];
+        const noDamageList = [];
+
+        // Comprobar daño que realiza el Pokémon
+        for (let type in damageOutputModifiers) {
+            if (damageOutputModifiers[type] > 1) {
+                superEffectiveList.push(type);
+            }
+        }
+
+        // Comprobar daño que recibe el Pokémon
+        for (let type in damageInputModifiers) {
+            if (damageInputModifiers[type] > 1) {
+                notVeryEffectiveList.push(type);
+            } else if (damageInputModifiers[type] === 0) {
+                noDamageList.push(type);
+            }
+        }
+
+        // Suponiendo que tienes elementos en tu HTML donde mostrarás los resultados
+        const doubleDamageToElem = document.getElementById('doubleDamageTo');
+        const doubleDamageFromElem = document.getElementById('doubleDamageFrom');
+        const noDamageFromElem = document.getElementById('noDamageFrom');
+
+          // Limpiamos el contenido anterior de los elementos
+        doubleDamageToElem.innerHTML = '';
+        doubleDamageFromElem.innerHTML = '';
+        noDamageFromElem.innerHTML = '';
+
+        // Añadir imágenes para el daño que realiza el Pokémon
+        for (let type of superEffectiveList) {
+            const imgElem = document.createElement('img');
+            imgElem.src = `img/${type}.png`; // Asume que tienes imágenes con nombres como 'fire.png', 'water.png', etc.
+            imgElem.alt = type;
+            doubleDamageToElem.appendChild(imgElem);
+        }
+
+        // Añadir imágenes para el daño que recibe el Pokémon
+        for (let type of notVeryEffectiveList) {
+            const imgElem = document.createElement('img');
+            imgElem.src = `img/${type}.png`;
+            imgElem.alt = type;
+            doubleDamageFromElem.appendChild(imgElem);
+        }
+
+        // Añadir imágenes para los tipos de daño que no afectan al Pokémon
+        for (let type of noDamageList) {
+            const imgElem = document.createElement('img');
+            imgElem.src = `img/${type}.png`;
+            imgElem.alt = type;
+            noDamageFromElem.appendChild(imgElem);
+        }
+        // Luego de calcular el daño en updateDamageRelations...
+        for (let type of selectedTypes) {
+            const imgElem = document.querySelector(`img[alt="${type}"]`);
+            if (imgElem.querySelector('.star')) {
+                imgElem.removeChild(imgElem.querySelector('.star'));
+            }
+
+            // Si el tipo realiza o recibe x4 daño
+            if (Object.values(damageOutputModifiers).includes(4) || Object.values(damageInputModifiers).includes(4)) {
+                const starElem = document.createElement('div');
+                starElem.classList.add('star');
+                imgElem.appendChild(starElem);
+            }
+        }
+    }
+    const fourTimesEffectiveList = [];
+
+    // Comprobar daño que recibe el Pokémon
+    for (let type in damageInputModifiers) {
+        if (damageInputModifiers[type] === 4) {
+            fourTimesEffectiveList.push(type);
+        } else if (damageInputModifiers[type] > 1 && damageInputModifiers[type] < 4) {
+            notVeryEffectiveList.push(type);
+        } else if (damageInputModifiers[type] === 0) {
+            noDamageList.push(type);
+        }
+    }
+
+    // Añadir imágenes para el daño que recibe el Pokémon
+    for (let type of notVeryEffectiveList) {
+            const imgElem = document.createElement('img');
+            imgElem.src = `img/${type}.png`; 
+            imgElem.alt = type;
+            doubleDamageFromElem.appendChild(imgElem);
+        }
+
+    // Añadir imágenes para los tipos de los que el Pokémon no recibe daño
+    for (let type of noDamageList) {
+        const imgElem = document.createElement('img');
+        imgElem.src = `img/${type}.png`; 
+        imgElem.alt = type;
+        noDamageFromElem.appendChild(imgElem);
+    }
+
+</script>
+
+</body>
+</html>
